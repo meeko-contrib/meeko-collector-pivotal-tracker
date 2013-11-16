@@ -69,7 +69,8 @@ func handlePTActivityHook(w http.ResponseWriter, r *http.Request) {
 
 	if err := collector.Publish("pivotaltracker."+kind, event); err != nil {
 		http.Error(w, "Event Not Published", http.StatusInternalServerError)
-		return
+		// This is a critical error, panic.
+		panic(err)
 	}
 
 	w.WriteHeader(http.StatusNoContent)
