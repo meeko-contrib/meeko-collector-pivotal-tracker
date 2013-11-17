@@ -22,7 +22,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	auth "github.com/abbot/go-http-auth"
 	collector "github.com/salsita/cider-abstract-webhook"
 )
 
@@ -37,7 +36,7 @@ func main() {
 
 func handlePTActivityHook(w http.ResponseWriter, r *http.Request) {
 	// Expecting JSON. We could wait for json.Unmarshal to fail, but...
-	if ct := r.Header["Content-Type"]; len(ct) != 1 || ct != "application/json" {
+	if ct := r.Header["Content-Type"]; len(ct) != 1 || ct[0] != "application/json" {
 		http.Error(w, "Json Expected", http.StatusUnsupportedMediaType)
 		return
 	}
@@ -54,16 +53,22 @@ func handlePTActivityHook(w http.ResponseWriter, r *http.Request) {
 
 	// Unmarshal the event object.
 	var event map[string]interface{}
-	err := json.Unmarshal(body, &event)
+	err = json.Unmarshal(body, &event)
 	if err != nil {
 		http.Error(w, "Invalid Json", http.StatusBadRequest)
 		return
 	}
 
 	// Publish the event.
-	kind, ok := event["kind"]
+	kindValue, ok := event["kind"]
 	if !ok {
 		http.Error(w, "Kind Field Missing", statusUnprocessableEntity)
+		return
+	}
+
+	kind, ok := kindValue.(string)
+	if !ok {
+		http.Error(w, "Unexpected Kind Field Type", statusUnprocessableEntity)
 		return
 	}
 
