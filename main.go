@@ -51,31 +51,28 @@ func handlePTActivityHook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Unmarshal the event object.
-	var event map[string]interface{}
-	err = json.Unmarshal(body, &event)
+	// Unmarshal the activity item.
+	var item ActivityItem
+	err = json.Unmarshal(body, &item)
 	if err != nil {
 		http.Error(w, "Invalid Json", http.StatusBadRequest)
 		return
 	}
 
-	// Publish the event.
-	kindValue, ok := event["kind"]
-	if !ok {
-		http.Error(w, "Kind Field Missing", statusUnprocessableEntity)
-		return
-	}
+	// Mine all the events that can be generated from the received item.
+	for _, activity := range item.Activities() {
+		for _, mineFunc := range mineFuncs {
+			event := mineFunc(activity)
+			if event == nil {
+				continue
+			}
 
-	kind, ok := kindValue.(string)
-	if !ok {
-		http.Error(w, "Unexpected Kind Field Type", statusUnprocessableEntity)
-		return
-	}
-
-	if err := collector.Publish("pivotaltracker."+kind, event); err != nil {
-		http.Error(w, "Event Not Published", http.StatusInternalServerError)
-		// This is a critical error, panic.
-		panic(err)
+			if err := collector.Publish(event.Type, event.Body); err != nil {
+				http.Error(w, "Event Not Published", http.StatusInternalServerError)
+				// This is a critical error, panic.
+				panic(err)
+			}
+		}
 	}
 
 	w.WriteHeader(http.StatusNoContent)
