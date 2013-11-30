@@ -17,63 +17,10 @@
 
 package main
 
-import (
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
-
-	collector "github.com/salsita-cider/cider-abstract-webhook"
-)
-
-const (
-	statusUnprocessableEntity = 422
-	maxBodySize               = int64(10 << 20)
-)
+import receiver "github.com/salsita-cider/cider-webhook-receiver"
 
 func main() {
-	collector.ListenAndServe(handlePTActivityHook)
-}
-
-func handlePTActivityHook(w http.ResponseWriter, r *http.Request) {
-	// Expecting JSON. We could wait for json.Unmarshal to fail, but...
-	if ct := r.Header["Content-Type"]; len(ct) != 1 || ct[0] != "application/json" {
-		http.Error(w, "Json Expected", http.StatusUnsupportedMediaType)
-		return
-	}
-
-	// Read the request body.
-	bodyReader := http.MaxBytesReader(w, r.Body, maxBodySize)
-	defer bodyReader.Close()
-
-	body, err := ioutil.ReadAll(bodyReader)
-	if err != nil {
-		http.Error(w, "Request Payload Too Large", http.StatusRequestEntityTooLarge)
-		return
-	}
-
-	// Unmarshal the activity item.
-	var item ActivityItem
-	err = json.Unmarshal(body, &item)
-	if err != nil {
-		http.Error(w, "Invalid Json", http.StatusBadRequest)
-		return
-	}
-
-	// Mine all the events that can be generated from the received item.
-	for _, activity := range item.Activities() {
-		for _, mineFunc := range mineFuncs {
-			event := mineFunc(activity)
-			if event == nil {
-				continue
-			}
-
-			if err := collector.Publish(event.Type, event.Body); err != nil {
-				http.Error(w, "Event Not Published", http.StatusInternalServerError)
-				// This is a critical error, panic.
-				panic(err)
-			}
-		}
-	}
-
-	w.WriteHeader(http.StatusNoContent)
+	receiver.ListenAndServe(&PTWebhookHandler{
+		Forward: receiver.Forward,
+	})
 }

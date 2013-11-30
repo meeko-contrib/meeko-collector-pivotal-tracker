@@ -28,7 +28,7 @@ type ActivityItem struct {
 	Changes     []Change
 }
 
-type Activity struct {
+type ResourceChange struct {
 	Project     *Project
 	Kind        *string
 	Message     *string
@@ -39,13 +39,13 @@ type Activity struct {
 	Change      *Change
 }
 
-func (item *ActivityItem) Activities() []*Activity {
-	as := make([]*Activity, 0)
+func (item *ActivityItem) ExtractChanges() []*ResourceChange {
+	changes := make([]*ResourceChange, 0)
 
 	for _, ch := range item.Changes {
 		for _, r := range item.Resources {
 			if ch.ResourceId == r.Id {
-				as = append(as, &Activity{
+				changes = append(changes, &ResourceChange{
 					Project:     &item.Project,
 					Kind:        &item.Kind,
 					Message:     &item.Message,
@@ -59,7 +59,7 @@ func (item *ActivityItem) Activities() []*Activity {
 		}
 	}
 
-	return as
+	return changes
 }
 
 type Project struct {

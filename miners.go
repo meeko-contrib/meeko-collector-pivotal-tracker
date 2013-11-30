@@ -17,12 +17,7 @@
 
 package main
 
-type Event struct {
-	Type string
-	Body interface{}
-}
-
-type mineFunc func(*Activity) *Event
+type mineFunc func(resChange *ResourceChange) (typ string, body interface{})
 
 var mineFuncs = [...]mineFunc{
 	mineStoryStateChangedEvent,
@@ -32,23 +27,20 @@ var mineFuncs = [...]mineFunc{
 // pivotaltracker.story_state_changed //
 //------------------------------------//
 
-func mineStoryStateChangedEvent(activity *Activity) *Event {
-	if !activity.Resource.IsStory() {
-		return nil
+func mineStoryStateChangedEvent(resChange *ResourceChange) (typ string, body interface{}) {
+	if !resChange.Resource.IsStory() {
+		return "", nil
 	}
 
-	ch := activity.Change.AsStoryChange()
+	ch := resChange.Change.AsStoryChange()
 
 	if ch.Type != "update" {
-		return nil
+		return "", nil
 	}
 
 	if !ch.HasStateChanged() {
-		return nil
+		return "", nil
 	}
 
-	return &Event{
-		Type: "pivotaltracker.story_state_changed",
-		Body: activity,
-	}
+	return "pivotaltracker.story_state_changed", resChange
 }
