@@ -151,9 +151,9 @@ func TestPTWebhookHandler_HandleStoryStateChangedActivityItem(t *testing.T) {
 
 		handler.ServeHTTP(rw, req)
 
-		if rw.Code != http.StatusNoContent {
+		if rw.Code != http.StatusAccepted {
 			t.Fatalf("Unexpected status code returned: expected %d, received %d %s",
-				http.StatusNoContent, rw.Code, rw.Body.String())
+				http.StatusAccepted, rw.Code, rw.Body.String())
 		}
 
 		Convey("A story_state_changed event with the correct payload should be emitted", func() {

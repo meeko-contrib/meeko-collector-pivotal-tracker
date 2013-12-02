@@ -75,5 +75,5 @@ func (handler *PTWebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 		}
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	w.WriteHeader(http.StatusAccepted)
 }
