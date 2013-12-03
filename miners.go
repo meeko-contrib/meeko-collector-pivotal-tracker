@@ -17,7 +17,11 @@
 
 package main
 
-type mineFunc func(resChange *ResourceChange) (typ string, body interface{})
+import (
+	"github.com/salsita-cider/cider-collector-pivotal-tracker/data"
+)
+
+type mineFunc func(resChange *data.ResourceChange) (typ string, body interface{})
 
 var mineFuncs = [...]mineFunc{
 	mineStoryStateChangedEvent,
@@ -27,7 +31,7 @@ var mineFuncs = [...]mineFunc{
 // pivotaltracker.story_state_changed //
 //------------------------------------//
 
-func mineStoryStateChangedEvent(resChange *ResourceChange) (typ string, body interface{}) {
+func mineStoryStateChangedEvent(resChange *data.ResourceChange) (typ string, body interface{}) {
 	if !resChange.Resource.IsStory() {
 		return "", nil
 	}

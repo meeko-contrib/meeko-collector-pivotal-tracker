@@ -22,6 +22,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/salsita-cider/cider-collector-pivotal-tracker/data"
 	receiver "github.com/salsita-cider/cider-webhook-receiver"
 )
 
@@ -52,7 +53,7 @@ func (handler *PTWebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	}
 
 	// Unmarshal the activity item.
-	var item ActivityItem
+	var item data.ActivityItem
 	err = json.Unmarshal(body, &item)
 	if err != nil {
 		http.Error(w, "Invalid Json", http.StatusBadRequest)

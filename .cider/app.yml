@@ -1,3 +1,5 @@
 name: "collector-pivotal-tracker"
 version: "0.0.1"
 description: "Collector for Pivotal Tracker activity web hook"
+dependencies:
+  - "cider-webhook-receiver"

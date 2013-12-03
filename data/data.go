@@ -15,7 +15,7 @@
    along with this program. If not, see {http://www.gnu.org/licenses/}.
 */
 
-package main
+package data
 
 type ActivityItem struct {
 	Project     Project
@@ -136,6 +136,10 @@ type Change struct {
 	NewValues      map[string]interface{} `json:"new_values"      codec:"new_values"`
 }
 
+func (ch *Change) IsStoryChange() bool {
+	return ch.isChangeOf("story")
+}
+
 func (ch *Change) AsStoryChange() *StoryChange {
 	ch.mustBeChangeOf("story")
 	return (*StoryChange)(ch)
@@ -143,8 +147,12 @@ func (ch *Change) AsStoryChange() *StoryChange {
 
 // Helpers ---------------------------------------------------------------------
 
+func (ch *Change) isChangeOf(kind string) bool {
+	return ch.ResourceKind == kind
+}
+
 func (ch *Change) mustBeChangeOf(kind string) {
-	if ch.ResourceKind != kind {
+	if !ch.isChangeOf(kind) {
 		panic("Not a change of a " + kind)
 	}
 }

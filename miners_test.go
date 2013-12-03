@@ -3,6 +3,7 @@ package main
 import (
 	"testing"
 
+	"github.com/salsita-cider/cider-collector-pivotal-tracker/data"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -11,7 +12,7 @@ import (
 //------------------------------------//
 
 func Test_mineStoryStateChangedEvent(t *testing.T) {
-	var change *ResourceChange
+	var change *data.ResourceChange
 
 	Convey("Given a story state update activity", t, func() {
 		change = storyStateChangedResourceChange

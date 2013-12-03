@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/salsita-cider/cider-collector-pivotal-tracker/data"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -69,31 +70,31 @@ var rawStoryStateChangedItem = []byte(`
 
 // A ResourceChange that represents the resource change contained in
 // the activity item specified above.
-var storyStateChangedResourceChange *ResourceChange
+var storyStateChangedResourceChange *data.ResourceChange
 
 func init() {
 	var (
-		project = Project{
+		project = data.Project{
 			Id:   959942,
 			Name: "Workflow Test Project",
 		}
 		kind        = "story_update_activity"
 		message     = "Pepa Novak started this feature"
 		highlight   = "started"
-		performedBy = Person{
+		performedBy = data.Person{
 			Id:       537831,
 			Name:     "Pepa Novak",
 			Initials: "PN",
 		}
 		occurredAt = float64(1385550496000)
-		resource   = Resource{
+		resource   = data.Resource{
 			Kind:      "story",
 			Id:        61540514,
 			Name:      "New Story",
 			StoryType: "feature",
 			URL:       "http://www.pivotaltracker.com/story/show/61540514",
 		}
-		change = Change{
+		change = data.Change{
 			ResourceId:   61540514,
 			ResourceKind: "story",
 			Type:         "update",
@@ -110,7 +111,7 @@ func init() {
 		}
 	)
 
-	storyStateChangedResourceChange = &ResourceChange{
+	storyStateChangedResourceChange = &data.ResourceChange{
 		Project:     &project,
 		Kind:        &kind,
 		Message:     &message,
