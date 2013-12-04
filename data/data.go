@@ -176,12 +176,10 @@ func (ch *Change) getStringValueChange(key string) *StringValueChange {
 	return &StringValueChange{
 		Original: &StringValue{
 			Value:     original.(string),
-			OwnerId:   ch.OriginalValues["owned_by_id"].(float64),
 			UpdatedAt: ch.OriginalValues["updated_at"].(float64),
 		},
 		Current: &StringValue{
 			Value:     current.(string),
-			OwnerId:   ch.NewValues["owned_by_id"].(float64),
 			UpdatedAt: ch.NewValues["updated_at"].(float64),
 		},
 	}

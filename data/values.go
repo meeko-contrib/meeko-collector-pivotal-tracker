@@ -24,6 +24,5 @@ type StringValueChange struct {
 
 type StringValue struct {
 	Value     string
-	OwnerId   float64
 	UpdatedAt float64
 }
