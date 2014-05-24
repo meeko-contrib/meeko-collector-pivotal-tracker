@@ -8,7 +8,7 @@ package handler
 import (
 	"testing"
 
-	"github.com/salsita-cider/cider-collector-pivotal-tracker/data"
+	"github.com/meeko-contrib/meeko-collector-pivotal-tracker/data"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
