@@ -1,29 +1,16 @@
-/*
-   Copyright (C) 2013  Salsita s.r.o.
+// Copyright (c) 2013-2014 The meeko-collector-pivotal-tracker AUTHORS
+//
+// Use of this source code is governed by the MIT license
+// that can be found in the LICENSE file.
 
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program. If not, see {http://www.gnu.org/licenses/}.
-*/
-
-package main
+package handler
 
 import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 
-	"github.com/salsita-cider/cider-collector-pivotal-tracker/data"
-	receiver "github.com/salsita-cider/cider-webhook-receiver"
+	"github.com/meeko-contrib/meeko-collector-pivotal-tracker/data"
 )
 
 const (
@@ -32,12 +19,12 @@ const (
 )
 
 type PTWebhookHandler struct {
-	Forward receiver.ForwardFunc
+	Forward func(eventType string, eventObject interface{}) error
 }
 
 func (handler *PTWebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Expecting JSON. We could wait for json.Unmarshal to fail, but...
-	if ct := r.Header["Content-Type"]; len(ct) != 1 || ct[0] != "application/json" {
+	if ct := r.Header.Get("Content-Type"); ct != "application/json" {
 		http.Error(w, "Json Content Type Expected", http.StatusUnsupportedMediaType)
 		return
 	}

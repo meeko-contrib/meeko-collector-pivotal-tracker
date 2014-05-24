@@ -1,0 +1,15 @@
+{
+  "name": "collector-pivotal-tracker",
+  "version": "0.0.1",
+  "description": "Meeko collector for Pivotal Tracker activity webhook",
+  "clone_dir": "github.com/meeko-contrib/meeko-collector-pivotal-tracker",
+  "variables": {
+    "LISTEN_ADDRESS": {
+      "usage": "TCP network address to listen on; format [HOST]:PORT"
+    },
+    "ACCESS_TOKEN": {
+      "usage": "token to be used for GitHub hooks authentication",
+      "secret": true
+    } 
+  }
+}
